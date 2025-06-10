@@ -9,41 +9,201 @@ const Dashboard: React.FC = () => {
   const [timeRange, setTimeRange] = useState('7d');
   const [animateCards, setAnimateCards] = useState(false);
   const [activeTab, setActiveTab] = useState('trends');
+  const [dataLoading, setDataLoading] = useState(false);
 
-  // Mock data for demonstration
-  const metrics = [
-    {
-      title: 'Average Rate',
-      value: '$245',
-      change: '+5.2%',
-      changeType: 'increase' as const,
-    },
-    {
-      title: 'Rate Position',
-      value: '#3',
-      change: '+1 position',
-      changeType: 'increase' as const,
-    },
-    {
-      title: 'Competitor Gap',
-      value: '$12',
-      change: '-$3',
-      changeType: 'decrease' as const,
-    },
-    {
-      title: 'Rate Changes',
-      value: '7',
-      change: '+2 today',
-      changeType: 'neutral' as const,
-    },
-  ];
+  // Dynamic data based on time range
+  const getMetricsForTimeRange = (range: string) => {
+    switch (range) {
+      case '1d':
+        return [
+          {
+            title: 'Average Rate',
+            value: '$248',
+            change: '+1.8%',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Rate Position',
+            value: '#2',
+            change: '+1 position',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Competitor Gap',
+            value: '$8',
+            change: '-$4',
+            changeType: 'decrease' as const,
+          },
+          {
+            title: 'Rate Changes',
+            value: '3',
+            change: '+1 today',
+            changeType: 'neutral' as const,
+          },
+        ];
+      case '7d':
+        return [
+          {
+            title: 'Average Rate',
+            value: '$245',
+            change: '+5.2%',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Rate Position',
+            value: '#3',
+            change: '+1 position',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Competitor Gap',
+            value: '$12',
+            change: '-$3',
+            changeType: 'decrease' as const,
+          },
+          {
+            title: 'Rate Changes',
+            value: '7',
+            change: '+2 this week',
+            changeType: 'neutral' as const,
+          },
+        ];
+      case '30d':
+        return [
+          {
+            title: 'Average Rate',
+            value: '$242',
+            change: '+8.7%',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Rate Position',
+            value: '#4',
+            change: '-1 position',
+            changeType: 'decrease' as const,
+          },
+          {
+            title: 'Competitor Gap',
+            value: '$18',
+            change: '+$5',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Rate Changes',
+            value: '28',
+            change: '+12 this month',
+            changeType: 'increase' as const,
+          },
+        ];
+      case '90d':
+        return [
+          {
+            title: 'Average Rate',
+            value: '$238',
+            change: '+12.3%',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Rate Position',
+            value: '#5',
+            change: '-2 positions',
+            changeType: 'decrease' as const,
+          },
+          {
+            title: 'Competitor Gap',
+            value: '$25',
+            change: '+$10',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Rate Changes',
+            value: '94',
+            change: '+38 this quarter',
+            changeType: 'increase' as const,
+          },
+        ];
+      default:
+        return [
+          {
+            title: 'Average Rate',
+            value: '$245',
+            change: '+5.2%',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Rate Position',
+            value: '#3',
+            change: '+1 position',
+            changeType: 'increase' as const,
+          },
+          {
+            title: 'Competitor Gap',
+            value: '$12',
+            change: '-$3',
+            changeType: 'decrease' as const,
+          },
+          {
+            title: 'Rate Changes',
+            value: '7',
+            change: '+2 this week',
+            changeType: 'neutral' as const,
+          },
+        ];
+    }
+  };
 
-  const quickStats = [
-    { label: 'Hotels Monitored', value: '24' },
-    { label: 'Active Alerts', value: '12' },
-    { label: 'Data Points Today', value: '1,248' },
-    { label: 'Accuracy Rate', value: '99.7%' },
-  ];
+  const getQuickStatsForTimeRange = (range: string) => {
+    switch (range) {
+      case '1d':
+        return [
+          { label: 'Rate Updates Today', value: '47' },
+          { label: 'Active Alerts', value: '3' },
+          { label: 'Data Points Today', value: '1,248' },
+          { label: 'Accuracy Rate', value: '99.9%' },
+        ];
+      case '7d':
+        return [
+          { label: 'Hotels Monitored', value: '24' },
+          { label: 'Active Alerts', value: '12' },
+          { label: 'Data Points', value: '8,736' },
+          { label: 'Accuracy Rate', value: '99.7%' },
+        ];
+      case '30d':
+        return [
+          { label: 'Hotels Monitored', value: '24' },
+          { label: 'Alerts Triggered', value: '38' },
+          { label: 'Data Points', value: '37,440' },
+          { label: 'Accuracy Rate', value: '99.5%' },
+        ];
+      case '90d':
+        return [
+          { label: 'Hotels Monitored', value: '24' },
+          { label: 'Alerts Triggered', value: '125' },
+          { label: 'Data Points', value: '112,320' },
+          { label: 'Accuracy Rate', value: '99.4%' },
+        ];
+      default:
+        return [
+          { label: 'Hotels Monitored', value: '24' },
+          { label: 'Active Alerts', value: '12' },
+          { label: 'Data Points', value: '8,736' },
+          { label: 'Accuracy Rate', value: '99.7%' },
+        ];
+    }
+  };
+
+  const getTimeRangeLabel = (range: string) => {
+    switch (range) {
+      case '1d': return 'today';
+      case '7d': return 'this week';
+      case '30d': return 'this month';
+      case '90d': return 'this quarter';
+      default: return 'this week';
+    }
+  };
+
+  const metrics = getMetricsForTimeRange(timeRange);
+  const quickStats = getQuickStatsForTimeRange(timeRange);
 
   const recentActivity = [
     {
@@ -100,6 +260,19 @@ const Dashboard: React.FC = () => {
     setAnimateCards(true);
   }, []);
 
+  // Handle time range change with loading animation
+  const handleTimeRangeChange = (newTimeRange: string) => {
+    setDataLoading(true);
+    setAnimateCards(false);
+    
+    // Simulate data loading delay for better UX
+    setTimeout(() => {
+      setTimeRange(newTimeRange);
+      setAnimateCards(true);
+      setDataLoading(false);
+    }, 300);
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'success':
@@ -127,21 +300,38 @@ const Dashboard: React.FC = () => {
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-900">Welcome back!</h1>
             <p className="mt-2 text-lg text-gray-600">
-              Here's what's happening with your hotel rates today.
+              Here's what's happening with your hotel rates {getTimeRangeLabel(timeRange)}.
             </p>
+            {dataLoading && (
+              <div className="mt-2 text-sm text-blue-600 flex items-center">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Updating data for {getTimeRangeLabel(timeRange)}...
+              </div>
+            )}
           </div>
           <div className="mt-4 lg:mt-0 flex items-center space-x-3">
-            <select 
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="1d">Last 24 Hours</option>
-              <option value="7d">Last 7 Days</option>
-              <option value="30d">Last 30 Days</option>
-              <option value="90d">Last 90 Days</option>
-            </select>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <div className="relative">
+              <select 
+                value={timeRange}
+                onChange={(e) => handleTimeRangeChange(e.target.value)}
+                disabled={dataLoading}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-white pr-8"
+              >
+                <option value="1d">Last 24 Hours</option>
+                <option value="7d">Last 7 Days</option>
+                <option value="30d">Last 30 Days</option>
+                <option value="90d">Last 90 Days</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled={dataLoading}>
               Export Report
             </button>
           </div>
@@ -151,10 +341,10 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {quickStats.map((stat, index) => (
             <div 
-              key={stat.label}
+              key={`${stat.label}-${timeRange}`}
               className={`bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border border-gray-200 transform transition-all duration-500 ${
                 animateCards ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-              }`}
+              } ${dataLoading ? 'animate-pulse' : ''}`}
               style={{ transitionDelay: `${index * 100}ms` }}
             >
               <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
@@ -167,10 +357,10 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {metrics.map((metric, index) => (
             <div
-              key={index}
+              key={`${metric.title}-${timeRange}`}
               className={`transform transition-all duration-700 ${
                 animateCards ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-              }`}
+              } ${dataLoading ? 'animate-pulse' : ''}`}
               style={{ transitionDelay: `${200 + index * 150}ms` }}
             >
               <MetricCard {...metric} />
@@ -187,13 +377,25 @@ const Dashboard: React.FC = () => {
               <div className="border-b border-gray-200">
                 <div className="px-6 py-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-semibold text-gray-900">Analytics Dashboard</h3>
+                    <div className="flex items-center space-x-3">
+                      <h3 className="text-xl font-semibold text-gray-900">Analytics Dashboard</h3>
+                      {dataLoading && (
+                        <div className="flex items-center text-sm text-blue-600">
+                          <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Updating...
+                        </div>
+                      )}
+                    </div>
                     <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
                       {tabItems.map((tab) => (
                         <button
                           key={tab.id}
                           onClick={() => setActiveTab(tab.id)}
-                          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          disabled={dataLoading}
+                          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors disabled:opacity-50 ${
                             activeTab === tab.id
                               ? 'bg-white text-blue-600 shadow-sm'
                               : 'text-gray-600 hover:text-gray-900'
@@ -209,7 +411,7 @@ const Dashboard: React.FC = () => {
               </div>
 
               {/* Chart Content */}
-              <div className="p-6">
+              <div className={`p-6 transition-opacity duration-300 ${dataLoading ? 'opacity-50' : 'opacity-100'}`}>
                 {activeTab === 'trends' && (
                   <RateTrendChart timeRange={timeRange} height={400} />
                 )}

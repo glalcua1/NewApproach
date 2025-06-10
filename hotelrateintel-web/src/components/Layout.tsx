@@ -8,6 +8,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const navigation = [
@@ -76,18 +77,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       )}
 
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed md:relative md:translate-x-0 flex flex-col w-64 bg-white shadow-xl transition-transform duration-300 ease-in-out z-30 md:z-0`}>
+      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed md:relative flex flex-col ${sidebarCollapsed ? 'w-16' : 'w-64'} bg-white shadow-xl transition-all duration-300 ease-in-out z-30 md:z-0`}>
         {/* Logo area */}
         <div className="flex items-center justify-between h-16 px-6 bg-gradient-to-r from-blue-600 to-blue-700">
-          <div className="flex items-center space-x-3">
+          <div className={`flex items-center space-x-3 ${sidebarCollapsed ? 'justify-center w-full' : ''}`}>
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
               <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
                 <path d="M8 5a2 2 0 012-2h4a2 2 0 012 2v3H8V5z" />
               </svg>
             </div>
-            <h1 className="text-lg font-bold text-white">HotelRateIntel</h1>
+            {!sidebarCollapsed && (
+              <h1 className="text-lg font-bold text-white">HotelRateIntel</h1>
+            )}
           </div>
+          {/* Collapse toggle button for desktop */}
+          <button 
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="hidden md:block text-white hover:text-gray-200 transition-colors"
+            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <svg className={`w-5 h-5 transform transition-transform duration-200 ${sidebarCollapsed ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+          </button>
+          {/* Mobile close button */}
           <button 
             onClick={() => setSidebarOpen(false)}
             className="md:hidden text-white hover:text-gray-200"
@@ -99,50 +113,69 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        <nav className={`flex-1 px-4 py-6 space-y-2 ${sidebarCollapsed ? 'px-2' : ''}`}>
           {navigation.map((item) => (
             <Link
               key={item.name}
               to={item.href}
               onClick={() => setSidebarOpen(false)}
-              className={`group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+              className={`group flex items-center ${sidebarCollapsed ? 'px-2 py-3 justify-center' : 'px-3 py-3'} text-sm font-medium rounded-xl transition-all duration-200 ${
                 isActive(item.href)
                   ? 'bg-blue-50 text-blue-700 shadow-sm border border-blue-100'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
+              title={sidebarCollapsed ? item.name : ''}
             >
-              <div className={`mr-3 transition-colors duration-200 ${
+              <div className={`${sidebarCollapsed ? '' : 'mr-3'} transition-colors duration-200 ${
                 isActive(item.href) ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'
               }`}>
                 {item.icon}
               </div>
-              <div className="flex-1">
-                <div className="font-medium">{item.name}</div>
-                <div className={`text-xs mt-0.5 ${
-                  isActive(item.href) ? 'text-blue-600' : 'text-gray-400'
-                }`}>
-                  {item.description}
+              {!sidebarCollapsed && (
+                <div className="flex-1">
+                  <div className="font-medium">{item.name}</div>
+                  <div className={`text-xs mt-0.5 ${
+                    isActive(item.href) ? 'text-blue-600' : 'text-gray-400'
+                  }`}>
+                    {item.description}
+                  </div>
                 </div>
-              </div>
-              {isActive(item.href) && (
+              )}
+              {!sidebarCollapsed && isActive(item.href) && (
                 <div className="w-2 h-2 bg-blue-600 rounded-full" />
+              )}
+              {sidebarCollapsed && isActive(item.href) && (
+                <div className="absolute right-1 w-1 h-8 bg-blue-600 rounded-full" />
               )}
             </Link>
           ))}
         </nav>
 
         {/* User profile area */}
-        <div className="border-t border-gray-200 p-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">U</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">User</p>
-              <p className="text-xs text-gray-500 truncate">user@example.com</p>
+        {!sidebarCollapsed && (
+          <div className="border-t border-gray-200 p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-medium">U</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">User</p>
+                <p className="text-xs text-gray-500 truncate">user@example.com</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+        
+        {/* Collapsed user profile */}
+        {sidebarCollapsed && (
+          <div className="border-t border-gray-200 p-2">
+            <div className="flex justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center" title="User Profile">
+                <span className="text-white text-sm font-medium">U</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Main content */}
