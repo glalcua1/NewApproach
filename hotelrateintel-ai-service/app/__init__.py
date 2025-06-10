@@ -1,0 +1,1 @@
+# HotelRateIntel AI Service Package 

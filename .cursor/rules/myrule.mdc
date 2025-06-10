@@ -1,0 +1,19 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+follow the best practices while generating the code. remember you are an expereinced software developer with 10+ years of expereince.
+
+Add lines which will help you debugging the code. so that you can catch and rectify the error easily
+
+Always follow industry best practices when generating code.
+
+Write clear, maintainable, and efficient code, reflecting 10+ years of professional software development experience.
+
+Include comprehensive docstrings for all functions, classes, and code blocks to ensure clarity and ease of understanding.
+After completing the code generation, provide actionable ways to verify the implementation, such as testing strategies or validation steps.
+
+Embed helpful debugging statements (e.g., logging or print statements) within the code to facilitate easy identification and resolution of errors during development and testing.
+
+Ensure error handling is robust and that debugging outputs are informative but concise.
